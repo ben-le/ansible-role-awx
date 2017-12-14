@@ -8,7 +8,7 @@ cache:
 matrix:
   fast_finish: true
 env:
-- LXC_DISTRO=debian LXC_RELEASE=jessie
+#- LXC_DISTRO=debian LXC_RELEASE=jessie
 - LXC_DISTRO=debian LXC_RELEASE=stretch
 - LXC_DISTRO=ubuntu LXC_RELEASE=xenial
 #- LXC_DISTRO=centos LXC_RELEASE=7
@@ -21,7 +21,7 @@ install:
 - pip install ansible
 - ansible --version
 - printf '[defaults]\nroles_path=../\ncallback_whitelist=profile_tasks\nforks=10\npipelining=True' >ansible.cfg
-- ansible-galaxy install lae.travis-lxc lae.docker 
+- ansible-galaxy install lae.travis-lxc lae.docker ben-le.awx_nginx
 - ansible-playbook -vvv tests/install.yml -i tests/inventory
 script:
 - ansible-playbook tests/deploy.yml -i tests/inventory --syntax-check
