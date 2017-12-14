@@ -1,0 +1,13 @@
+- name: Install requirements packages
+  apt: pkg={{ item }} 
+  with_items:
+    - git
+    - python-pip
+  state: present
+  update_cache: yes
+ 
+- name: Install docker-py and ansible via PIP
+  pip: name={{ item }}
+  with_items:
+    - ansible
+    - docker-py

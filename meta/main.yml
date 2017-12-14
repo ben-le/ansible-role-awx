@@ -1,0 +1,18 @@
+galaxy_info:
+  author: Benjamin Le
+  description: Quick and easy to deployment AWX on Debian and Ubuntu
+  license: MIT
+  min_ansible_version: 2.4
+  platforms:
+  - name: Debian
+    versions:
+    - all
+  - name: Ubuntu
+    versions:
+    - all
+
+  galaxy_tags: 
+    - awx
+    - install
+
+dependencies: []

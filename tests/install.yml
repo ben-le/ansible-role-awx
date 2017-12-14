@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+  connection: local
+  roles:
+    - lae.travis-lxc
+
+- hosts: awx
+  become: true
+  roles:
+    - lae.docker
