@@ -14,7 +14,7 @@ Example Playbook
 - hosts: awx
   roles:
     - lae.docker
-    - ben-le.ansible-role-awx
-    - ble.awx_nginx
+    - ben-le.awx
+    - ben-le.awx_nginx
 
 
