@@ -19,7 +19,7 @@
     force: yes
     accept_hostkey: yes
 
-- name: Copy awx invetory 
+- name: Copy awx inventory 
   template:
     src: inventory.j2
     dest: "{{ awx_repo_dir }}/installer/inventory"
