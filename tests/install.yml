@@ -8,3 +8,4 @@
   become: true
   roles:
     - lae.docker
+    - ben-le.awx_nginx
