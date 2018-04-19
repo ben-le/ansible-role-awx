@@ -7,5 +7,5 @@
 - hosts: awx
   become: true
   roles:
-    - lae.docker
+    - geerlingguy.docker
     - ben-le.awx_nginx
