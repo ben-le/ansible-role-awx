@@ -1,5 +1,5 @@
 ---
 - hosts: awx
-  become: true
-  roles: 
-    - ansible-role-awx
+  become: True
+  roles:
+    - ben-le.awx
