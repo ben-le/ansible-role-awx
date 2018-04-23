@@ -1,2 +1,3 @@
 [awx]
-test01.lxc
+debian-stretch
+ubuntu-xenial
