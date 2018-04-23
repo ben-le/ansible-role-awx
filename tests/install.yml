@@ -13,3 +13,34 @@
   become: True
   roles:
     - lae.docker
+  pre_tasks:
+    - name: Make cgroups modifiable
+      mount:
+        name: /sys/fs/cgroup
+        fstype: sysfs
+        src: sysfs
+        opts: rw
+        state: mounted
+
+    - name: Create missing cgroup directories
+      file:
+        path: "/sys/fs/cgroup/{{ item }}"
+        state: directory
+      with_items:
+        - cpu
+        - cpuacct
+        - net_cls
+        - net_prio
+
+    - name: Mount missing cgroups
+      mount:
+        name: "/sys/fs/cgroup/{{ item }}"
+        fstype: cgroup
+        src: cgroup
+        opts: "{{ item }}"
+        state: mounted
+      with_items:
+        - cpu
+        - cpuacct
+        - net_cls
+        - net_prio
