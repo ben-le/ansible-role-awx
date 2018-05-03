@@ -1,0 +1,8 @@
+---
+- name: Build and deploy AWX
+  hosts: all
+  become: yes
+  gather_facts: true
+  roles:
+    - docker
+    - awx_nginx

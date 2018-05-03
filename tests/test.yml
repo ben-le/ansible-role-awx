@@ -1,6 +1,0 @@
----
-- hosts: awx
-  tasks:
-    - name: AWX web UI testing
-      uri:
-        url: "http://localhost:8080"

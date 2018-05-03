@@ -1,0 +1,38 @@
+---
+
+# The following variables will be set by the runner of this playbook:
+# src: /tmp/some/path/private_data_dir
+# dest: /tmp/some/path/
+# proot_temp_dir: /tmp/some/path
+
+- name: Prepare data, dispatch job in isolated environment.
+  hosts: all
+  gather_facts: false
+  vars:
+      secret: "{{ lookup('pipe', 'cat ' + src + '/env') }}"
+
+  tasks:
+
+    - name: create a proot/bwrap temp dir (if necessary)
+      synchronize:
+        src: "{{proot_temp_dir}}"
+        dest: "{{dest}}"
+      when: proot_temp_dir is defined
+
+    - name: synchronize job environment with isolated host
+      synchronize:
+        copy_links: true
+        src: "{{src}}"
+        dest: "{{dest}}"
+
+    - name: create a named pipe for secret environment data
+      command: "mkfifo {{src}}/env"
+
+    - name: spawn the playbook
+      command: "awx-expect start {{src}}"
+
+    - name: write the secret environment data
+      mkfifo:
+        content: "{{secret}}"
+        path: "{{src}}/env"
+      no_log: True

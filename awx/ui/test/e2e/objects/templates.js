@@ -1,0 +1,267 @@
+import _ from 'lodash';
+
+import actions from './sections/actions';
+import breadcrumb from './sections/breadcrumb';
+import createFormSection from './sections/createFormSection';
+import createTableSection from './sections/createTableSection';
+import header from './sections/header';
+import lookupModal from './sections/lookupModal';
+import navigation from './sections/navigation';
+import pagination from './sections/pagination';
+import permissions from './sections/permissions';
+import search from './sections/search';
+
+const details = createFormSection({
+    selector: 'form',
+    props: {
+        formElementSelectors: [
+            '#job_template_form .Form-textInput',
+            '#job_template_form select.Form-dropDown',
+            '#job_template_form .Form-textArea',
+            '#job_template_form input[type="checkbox"]',
+            '#job_template_form .ui-spinner-input',
+            '#job_template_form .ScheduleToggle-switch'
+        ]
+    },
+    labels: {
+        name: 'Name',
+        description: 'Description',
+        playbook: 'Playbook'
+
+    }
+});
+
+const lookupInventory = _.merge({}, lookupModal, {
+    locateStrategy: 'xpath',
+    selector: './/div[text()="Select inventory"]/ancestor::div[contains(@class, "modal-content")]'
+});
+
+const lookupProject = _.merge({}, lookupModal, {
+    locateStrategy: 'xpath',
+    selector: './/div[text()="Select project"]/ancestor::div[contains(@class, "modal-content")]'
+});
+
+module.exports = {
+    url () {
+        return `${this.api.globals.launch_url}/#/templates`;
+    },
+    sections: {
+        header,
+        navigation,
+        breadcrumb,
+        lookupInventory,
+        lookupProject,
+        addJobTemplate: {
+            selector: 'div[ui-view="form"]',
+            sections: {
+                details
+            },
+            elements: {
+                title: 'div[class^="Form-title"]'
+            }
+        },
+        editJobTemplate: {
+            selector: 'div[ui-view="form"]',
+            sections: {
+                details,
+                permissions
+            },
+            elements: {
+                title: 'div[class^="Form-title"]'
+            }
+        },
+        addWorkflowJobTemplate: {
+            selector: 'div[ui-view="form"]',
+            sections: {
+                details
+            },
+            elements: {
+                title: 'div[class^="Form-title"]'
+            }
+        },
+        editWorkflowJobTemplate: {
+            selector: 'div[ui-view="form"]',
+            sections: {
+                details,
+                permissions
+            },
+            elements: {
+                title: 'div[class^="Form-title"]'
+            }
+        },
+        list: {
+            selector: '.Panel',
+            elements: {
+                badge: 'span[class~="badge"]',
+                title: 'div[class="List-titleText"]',
+                add: 'button[class~="List-buttonSubmit"]'
+            },
+            sections: {
+                search,
+                pagination,
+                table: createTableSection({
+                    elements: {
+                        name: 'td[class~="name-column"]',
+                        kind: 'td[class~="type-column"]'
+                    },
+                    sections: {
+                        actions
+                    }
+                })
+            }
+        }
+    },
+    elements: {
+        cancel: 'button[class*="Form-cancelButton"]',
+        save: 'button[class*="Form-saveButton"]'
+    },
+    commands: [{
+        load () {
+            this.api.url('data:,'); // https://github.com/nightwatchjs/nightwatch/issues/1724
+            return this.navigate();
+        },
+        clickWhenEnabled (selector) {
+            this.api.waitForElementVisible(selector);
+            this.expect.element(selector).enabled;
+            this.click(selector);
+            return this;
+        },
+        selectAdd (name) {
+            this.clickWhenEnabled('button span[class="at-List-toolbarDropdownCarat"]');
+
+            this.api
+                .useXpath()
+                .waitForElementVisible(`.//a[normalize-space(text())="${name}"]`)
+                .click(`//a[normalize-space(text())="${name}"]`)
+                .useCss();
+
+            return this;
+        },
+        selectPlaybook (name) {
+            this.clickWhenEnabled('label[for="playbook"] + div span[class$="arrow"]');
+
+            this.api
+                .useXpath()
+                .waitForElementVisible(`//li[contains(text(), "${name}")]`)
+                .click(`//li[contains(text(), "${name}")]`)
+                .useCss();
+
+            return this;
+        },
+        selectInventory (name) {
+            this.clickWhenEnabled('label[for="inventory"] + div i[class$="search"]');
+
+            this.api
+                .waitForElementVisible('div.spinny')
+                .waitForElementNotVisible('div.spinny');
+
+            this.section.lookupInventory.section.search
+                .waitForElementVisible('@input')
+                .waitForElementVisible('@searchButton')
+                .sendKeys('@input', name)
+                .click('@searchButton')
+                .waitForElementVisible('div.spinny')
+                .waitForElementNotVisible('div.spinny');
+
+            this.section.lookupInventory.section.table
+                .waitForRowCount(1)
+                .clickRowByIndex(1);
+
+            this.section.lookupInventory.expect.element('@save').enabled;
+
+            this.section.lookupInventory
+                .click('@save');
+
+            return this;
+        },
+        selectProject (name) {
+            this.clickWhenEnabled('label[for="project"] + div i[class$="search"]');
+
+            this.api
+                .waitForElementVisible('div.spinny')
+                .waitForElementNotVisible('div.spinny');
+
+            this.section.lookupProject.section.search
+                .waitForElementVisible('@input')
+                .waitForElementVisible('@searchButton')
+                .sendKeys('@input', name)
+                .click('@searchButton')
+                .waitForElementVisible('div.spinny')
+                .waitForElementNotVisible('div.spinny');
+
+            this.section.lookupProject.section.table
+                .waitForRowCount(1)
+                .clickRowByIndex(1);
+
+            this.section.lookupProject.expect.element('@save').enabled;
+
+            this.section.lookupProject
+                .click('@save')
+                .waitForElementVisible('div.spinny')
+                .waitForElementNotVisible('div.spinny');
+
+            return this;
+        },
+        selectVaultCredential (name) {
+            this.clickWhenEnabled('label[for="credential"] + div i[class$="search"]');
+
+            this.api
+                .waitForElementVisible('div.spinny')
+                .waitForElementNotVisible('div.spinny')
+                .waitForElementVisible('#multi-credential-kind-select + span span[class$="arrow"]')
+                .click('#multi-credential-kind-select + span span[class$="arrow"]')
+                .useXpath()
+                .waitForElementVisible('//li[contains(text(), "Vault")]')
+                .click('//li[contains(text(), "Vault")]')
+                .useCss()
+                .waitForElementVisible('div.spinny')
+                .waitForElementNotVisible('div.spinny')
+                .waitForElementVisible('multi-credential-modal smart-search input')
+                .waitForElementVisible('multi-credential-modal smart-search i[class$="search"]')
+                .sendKeys('multi-credential-modal smart-search input', name)
+                .click('multi-credential-modal smart-search i[class$="search"]')
+                .waitForElementVisible('div.spinny')
+                .waitForElementNotVisible('div.spinny')
+                .click('multi-credential-modal smart-search a[class*="clear"]')
+                .waitForElementVisible('div.spinny')
+                .waitForElementNotVisible('div.spinny')
+                .sendKeys('multi-credential-modal smart-search input', name)
+                .click('multi-credential-modal smart-search i[class$="search"]')
+                .waitForElementVisible('div.spinny')
+                .waitForElementNotVisible('div.spinny')
+                .waitForElementNotPresent('multi-credential-modal tbody tr:nth-child(2)')
+                .waitForElementVisible('multi-credential-modal tbody tr:nth-child(1) input[type="checkbox"]')
+                .click('multi-credential-modal tbody tr:nth-child(1) input[type="checkbox"]')
+                .click('multi-credential-modal button[class*="save"]')
+                .pause(1000);
+
+            return this;
+        },
+        selectMachineCredential (name) {
+            this.clickWhenEnabled('label[for="credential"] + div i[class$="search"]');
+
+            this.api
+                .waitForElementVisible('div.spinny')
+                .waitForElementNotVisible('div.spinny')
+                .waitForElementVisible('#multi-credential-kind-select + span span[class$="arrow"]')
+                .click('#multi-credential-kind-select + span span[class$="arrow"]')
+                .useXpath()
+                .waitForElementVisible('//li[contains(text(), "Machine")]')
+                .click('//li[contains(text(), "Machine")]')
+                .useCss()
+                .waitForElementVisible('multi-credential-modal smart-search input')
+                .waitForElementVisible('multi-credential-modal smart-search i[class$="search"]')
+                .sendKeys('multi-credential-modal smart-search input', name)
+                .click('multi-credential-modal smart-search i[class$="search"]')
+                .waitForElementVisible('div.spinny')
+                .waitForElementNotVisible('div.spinny')
+                .waitForElementNotPresent('multi-credential-modal tbody tr:nth-child(2)')
+                .waitForElementVisible('multi-credential-modal tbody tr:nth-child(1) input[type="radio"]')
+                .click('multi-credential-modal tbody tr:nth-child(1) input[type="radio"]')
+                .click('multi-credential-modal button[class*="save"]')
+                .pause(1000);
+
+            return this;
+        }
+    }]
+};

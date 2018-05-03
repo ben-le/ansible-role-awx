@@ -1,0 +1,78 @@
+/** @define ScheduleToggle */
+
+.Form-formGroup--disabled .ScheduleToggle {
+    cursor: not-allowed;
+    border-color: @default-link !important;
+    .ScheduleToggle-switch  {
+        background-color: @d7grey !important;
+        cursor: not-allowed;
+    }
+}
+
+.ScheduleToggle {
+    border-radius: 5px;
+    border: 1px solid @default-link;
+    background-color: @default-link;
+    margin-top: 2px;
+    cursor: pointer;
+    display: inline-block;
+    min-width: 42px;
+
+    &.ScheduleToggle--disabled  {
+        cursor: not-allowed;
+        background-color: none;
+        border-color: @d7grey !important;
+        .ScheduleToggle-switch  {
+            background-color: @d7grey !important;
+            cursor: not-allowed;
+        }
+    }
+}
+
+.ScheduleToggle-switch {
+    color: @default-link;
+    background-color: @default-bg;
+    margin-left: 7px;
+    border-left: 1px solid @default-link;
+    margin-right: 0px;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 11px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    padding-top: 0px;
+    border-top: 0px;
+    border-bottom: 0px;
+    border-right: 0px;
+    display: inline-block;
+    height: 22px;
+}
+
+.ScheduleToggle.is-on {
+    border-color: @default-link;
+    background-color: @default-bg;
+}
+
+.ScheduleToggle-switch.is-on {
+    margin-right: 5px;
+    margin-left: 0px;
+    background-color: @default-link;
+    color: @default-bg;
+    border-left: 0;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+.ScheduleToggle-switch:hover {
+    background-color: @default-tertiary-bg;
+}
+
+.ScheduleToggle.is-on:hover {
+    border-color: @default-link-hov;
+}
+
+.ScheduleToggle-switch.is-on:hover {
+    background-color: @default-link-hov;
+}

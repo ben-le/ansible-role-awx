@@ -1,0 +1,76 @@
+<at-panel>
+    <at-panel-heading>
+        {{ vm.panelTitle }}
+    </at-panel-heading>
+
+    <at-tab-group>
+        <at-tab state="vm.tab.details">{{:: vm.strings.get('tab.DETAILS') }}</at-tab>
+        <at-tab state="vm.tab.instances">{{:: vm.strings.get('tab.INSTANCES') }}</at-tab>
+        <at-tab state="vm.tab.jobs" ng-hide="$state.current.name === 'instanceGroups.add'">{{:: vm.strings.get('tab.JOBS') }}</at-tab>
+    </at-tab-group>
+
+    <at-panel-body>
+        <div class="at-List-toolbar">
+            <smart-search
+                class="at-List-search"
+                django-model="instances"
+                base-path="{{list.basePath}}"
+                iterator="instance"
+                list="list"
+                dataset="instance_dataset"
+                collection="collection"
+                search-tags="searchTags">
+            </smart-search>
+
+            <div class="at-List-toolbarAction">
+                <button
+                    type="button"
+                    ng-click="$state.go('instanceGroups.instances.modal.add')"
+                    class="at-Button--add"
+                    ng-show="vm.isSuperuser"
+                    aria-expanded="false">
+                </button>
+                <div ui-view="modal"></div>
+            </div>
+        </div>
+        <at-list results='vm.instances'>
+            <at-row ng-repeat="instance in vm.instances"
+                ng-class="{'at-Row--active': (instance.id === vm.activeId)}">
+                <div class="at-Row-toggle">
+                    <div class="ScheduleToggle"
+                        ng-class="{'is-on': instance.enabled,
+                            'ScheduleToggle--disabled': vm.rowAction.toggle._disabled}">
+                        <button ng-show="instance.enabled"
+                            class="ScheduleToggle-switch is-on ng-hide"
+                            ng-click="vm.toggle(instance)"
+                            ng-disabled="vm.rowAction.toggle._disabled">
+                            {{:: vm.strings.get('ON') }}
+                        </button>
+                        <button ng-show="!instance.enabled"
+                            class="ScheduleToggle-switch"
+                            ng-click="vm.toggle(instance)"
+                            ng-disabled="vm.rowAction.toggle._disabled">
+                            {{:: vm.strings.get('OFF') }}
+                        </button>
+                    </div>
+                </div>
+
+                <div class="at-Row-items">
+                    <at-row-item header-value="{{ instance.hostname }}"></at-row-item>
+                    <at-row-item
+                        label-value="Running Jobs"
+                        label-state="instanceGroups.instanceJobs({instance_group_id: {{vm.instance_group_id}}, instance_id: {{instance.id}}})"
+                        value="{{ instance.jobs_running }}"
+                        inline="true"
+                        badge="true">
+                    </at-row-item>
+                </div>
+
+                <div class="at-Row-actions">
+                    <capacity-adjuster state="instance" disabled="{{vm.rowAction.capacity_adjustment._disabled}}"></capacity-adjuster>
+                    <capacity-bar label-value="Used Capacity" capacity="instance.consumed_capacity" total-capacity="instance.capacity"></capacity-bar>
+                </div>
+            </at-row>
+        </at-list>
+    </at-panel-body>
+</at-panel>

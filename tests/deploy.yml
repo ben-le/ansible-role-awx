@@ -1,5 +1,0 @@
----
-- hosts: awx
-  become: True
-  roles:
-    - ben-le.awx
