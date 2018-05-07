@@ -1,10 +1,17 @@
 ---
-awx_repo: https://github.com/ansible/awx.git
-awx_repo_dir: "~/awx"
-awx_version: 1.0.1
-awx_keep_updated: yes
-awx_run_install_playbook: yes
-awx_host_port: "localhost:8080"
-awx_secret_key: "awxsecret"
-awx_postgres_data_dir: "/tmp/pgdocker"
-awx_pg_password: "awxpass"
+# By default the base will be used to search for ansible/awx_web and ansible/awx_task
+dockerhub_base: "ansible"
+dockerhub_version: "1.0.2"
+rabbitmq_version: "3.7.4"
+rabbitmq_image: "ansible/awx_rabbitmq:{{rabbitmq_version}}"
+
+# The docker_compose.yml file will be created in this directory
+docker_compose_dir: "/var/lib/awx"
+host_port: "localhost:8080"
+secret_key: "awxsecret"
+postgres_data_dir: "/var/lib/awx/pgdocker"
+project_data_dir: "/var/lib/awx/projects"
+pg_username: "awx"
+pg_password: "awxpass"
+pg_database: "awx"
+pg_port: "5432"

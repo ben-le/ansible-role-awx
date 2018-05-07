@@ -10,21 +10,7 @@
     state: present
   with_items: "{{ awx_package_dependencies }}"
 
-- name: Clone AWX into configured directory.
-  git:
-    repo: "{{ awx_repo }}"
-    dest: "{{ awx_repo_dir }}"
-    version: "{{ awx_version }}"
-    update: "{{ awx_keep_updated }}"
-    force: yes
-    accept_hostkey: yes
+- import_tasks: set_image.yml
 
-- name: Copy awx inventory 
-  template:
-    src: inventory.j2
-    dest: "{{ awx_repo_dir }}/installer/inventory"
+- import_tasks: standalone.yml
 
-- name: Run the AWX installation playbook.
-  command: "ansible-playbook -i inventory install.yml"
-  args:
-    chdir: "{{ awx_repo_dir }}/installer"
