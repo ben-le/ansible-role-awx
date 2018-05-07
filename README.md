@@ -1,5 +1,5 @@
 # Ansible role: AWX 1.0.1
-An Ansible role that installs AWX 1.0.1 on Debian 9 and Ubuntu 16.x
+An Ansible role that installs AWX on Docker Containers on Debian 8 and Ubuntu 16.x
 
 Requirements
 --
